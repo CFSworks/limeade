@@ -46,6 +46,10 @@ def mutate_functions(old_ns, new_ns):
     for f in tuple(filter(func_filter, new_ns.values())):
         old_f = old_funcs.get(f.__qualname__)
 
+        if old_f is None:
+            # There is no old function; let the new one take precedence
+            continue
+
         if f.__closure__ or old_f.__closure__:
             # Not safe to do this to closures
             continue
