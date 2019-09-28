@@ -19,4 +19,4 @@ from .scanning import scan
 __all__ = ['refresh', 'scan']
 
 __author__ = 'Sam Edwards <CFSworks@gmail.com>'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
