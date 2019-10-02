@@ -52,6 +52,12 @@ Some things which it cannot (even theoretically) handle are:
 - **Threads**: This is not incompatible with threading, but note that threads
   may observe the program in an inconsistent state if they're running during a
   refresh operation. Make sure your threads are out of harm's way!
+- **Changes to __init__ functions**: While the ``__init__`` change is handled
+  normally just like any other function, a common pitfall to watch for is that
+  the ``__init__`` function only runs when an instance is first created - as
+  so, if any code added in the refresh depends on extra code added to
+  ``__init__``, it may fail for classes which are already instantiated. An
+  automatic update facility may be added in the future.
 
 Some things which it may handle in the future:
 
@@ -68,6 +74,29 @@ Some things which it may handle in the future:
 - **Automatic rollback**: In case of refresh/mutate failure, it would be great
   to rollback everything to the state it was in before, so that the running app
   isn't left in a half-updated state.
+
+Comparison
+----------
+
+The idea of merely reloading modules in Python is not a new one. What sets
+Limeade apart is that it attempts to update extant classes (and their
+instances) and functions. Here are some other approaches and how Limeade
+differs:
+
+- **importlib.reload()**: This simply re-executes the module in the same module
+  namespace. The definitions of classes and functions are overwritten, but the
+  classes and functions themselves are not updated. Because the module
+  namespace is reused, a reload can be detected by first checking if certain
+  names already exist. Note that Limeade uses the ``importlib.reload()`` call
+  itself, so the same namespace reuse occurs at the module level.
+
+- **IPython's autoreload extension**: This is a much more similar approach to
+  Limeade from a theoretical standpoint. There are practical differences,
+  however: The autoreload extension contains imports that pull in IPython,
+  while Limeade is intended to function standalone. IPython is intended for
+  interactive use, while Limeade may be useful in hotpatching daemons and other
+  long-running standalone Python programs. Limeade also aspires to integrate
+  well with custom loaders and user logic.
 
 License
 -------
